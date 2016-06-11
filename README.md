@@ -5,17 +5,18 @@ You can either use the scripts directly or use master script setupDB to run most
 
 For basic usage:
 1. Create a text file with list of proteins and the interacting chains, for example:
-```
-1AKJ_AB:DE
-1AK4_A:D
-```
+  ```
+  1AKJ_AB:DE
+  1AK4_A:D
+  ```
 2. invoke setupDB.py on the file you just created, for example (assuming it is saved as PDBs.txt) 
-```
-python setupDB.py PDBs.txt
-```
+   ```
+  python setupDB.py PDBs.txt
+  ```
 Follow the script instructions and that's it!
 
-The script will:
+# PPI features
+The above script will:
 * Download PDBs from the RCSB PDB
 * Add hydrogens using [molprobity](http://molprobity.biochem.duke.edu/)
 * Calculate various properties:
