@@ -1,7 +1,13 @@
 This is collection of simple python scripts for calculating basic structural properties/features of protein complexes.
  
+# Install
+Download the code and run
+```
+python setup.py install
+```
+
 # Usage
-You can either use the scripts directly or use master script setupDB to run most of them on a list of proteins.
+You can either use the scripts directly or use master script setupPpiDb to run most of them on a list of proteins.
 
 For basic usage:
 1. Create a text file with list of proteins and the interacting chains, for example:
@@ -9,9 +15,9 @@ For basic usage:
   1AKJ_AB:DE
   1AK4_A:D
   ```
-2. invoke setupDB.py on the file you just created, for example (assuming it is saved as PDBs.txt) 
+2. invoke setupPpiDb.py on the file you just created, for example (assuming it is saved as PDBs.txt) 
    ```
-  python setupDB.py PDBs.txt
+  python setupPpiDb.py PDBs.txt
   ```
 Follow the script instructions and that's it!
 

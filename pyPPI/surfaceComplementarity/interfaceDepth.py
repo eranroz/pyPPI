@@ -3,13 +3,13 @@ Finds depth and periphriality for atoms
 """
 
 import math
-import sys
+
 import numpy as np
 
-from ASA import ASA
-from pdbReader import PDBReader
-from kdtree import KDTree
-import DBConfig
+from .. import DBConfig
+from ..ASA import ASA
+from ..kdtree import KDTree
+from ..pdbReader import PDBReader
 
 
 def get_interface_atoms(pdb, includingDistance=False):

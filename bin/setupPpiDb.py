@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """
 Setups a protein database in MySQL: a database of interesting properties of the proteins based on scripts of this library.
 
@@ -16,19 +16,20 @@ import argparse
 import os
 import subprocess
 import sys
-
+import pkg_resources
 import requests
+from pyPPI import DBConfig
 
-import DBConfig
-import surfaceComplementarity.VDW as VDW
-import surfaceComplementarity.interfaceDepth as Periphery
-from ASA import ASA
-from hbonds import hbonds
-from kdtree import KDTree
-import pdbReader
-from pdbReader import PDBReader
-import electrostat
-from cavities import calculateVolume
+import pyPPI.surfaceComplementarity.VDW as VDW
+import pyPPI.surfaceComplementarity.interfaceDepth as Periphery
+from pyPPI.ASA import ASA
+from pyPPI.hbonds import hbonds
+from pyPPI.kdtree import KDTree
+import pyPPI.pdbReader as pdbReader
+from pyPPI.pdbReader import PDBReader
+import pyPPI.electrostat as electrostat
+from pyPPI.cavities import calculateVolume
+
 
 """
 Distance in angtroms between the chains that is relevant for defining the interface
@@ -37,8 +38,9 @@ INTERFACE_DISTANCE = 4
 WORKING_DIRECTORY = './'
 PDBS_DIR = "./pdbs/"
 RESULTS_DIR = "./results/"
-MOLPROBITY_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'molprobity')) + os.path.sep
 
+_remediator = pkg_resources.resource_filename('pyPPI', '/'.join(['molprobity', 'remediator.pl']))
+_reduce_path = pkg_resources.resource_filename('pyPPI', '/'.join(['molprobity', 'reduce']))
 
 def download_PDB(pdb):
     """
@@ -88,20 +90,19 @@ def molprobity(pdb_name):
     :return:
     """
     global MOLPROBITY_DIR, PDBS_DIR
-    if os.path.exists(MOLPROBITY_DIR + pdb_name + '_FH.pdb'):
+    if os.path.exists(os.path.join(PDBS_DIR, pdb_name + "_FH.pdb")):
         return True  # already exist
     print('Starting molprobity %s' % pdb_name)
-    os.path.join(MOLPROBITY_DIR, 'remediator.pl')
-    subprocess.check_output('perl ' + os.path.join(MOLPROBITY_DIR, 'remediator.pl') + ' ' + os.path.join(PDBS_DIR,
+    subprocess.check_output('perl ' + _remediator + ' ' + os.path.join(PDBS_DIR,
                                                                                                          pdb_name + ".pdb") + ' > a',
                             shell=True)
     try:
-        subprocess.check_output(MOLPROBITY_DIR + 'reduce a > b', shell=True)
+        subprocess.check_output(_reduce_path + ' a > b', shell=True)
     except:
         print('error prasing PDB %s' % pdb_name)
         pass  # yakky kaky, but reduce returns 1 exit
     subprocess.check_output(
-        'perl ' + MOLPROBITY_DIR + 'remediator.pl b -oldout> ' + os.path.join(PDBS_DIR, pdb_name + "_FH.pdb"),
+        'perl ' + _remediator +' b -oldout> ' + os.path.join(PDBS_DIR, pdb_name + "_FH.pdb"),
         shell=True)
     # delete the PDB file - we will work with a file with hydrogens added (_FH create above)
     os.remove(os.path.join(PDBS_DIR, pdb_name + ".pdb"))

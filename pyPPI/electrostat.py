@@ -10,8 +10,8 @@ DRIEDING: A Generic Force field for molecular simulations
 """
 import math
 
-import DBConfig
-from kdtree import KDTree
+from . import DBConfig
+from .kdtree import KDTree
 
 
 def getHbonds(pdb, pdbName):

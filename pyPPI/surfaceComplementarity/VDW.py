@@ -9,11 +9,10 @@ import math
 import sys
 
 sys.path.append('../')
-from pdbReader import PDBReader
-from ASA import radio_atom, spiral
-from ASA import KNOWN_RADIUS
-from kdtree import KDTree
-import DBConfig
+from ..pdbReader import PDBReader
+from ..ASA import radio_atom, spiral, KNOWN_RADIUS
+from ..kdtree import KDTree
+from .. import DBConfig
 
 MAX_WW_RAD = max(KNOWN_RADIUS.values())
 

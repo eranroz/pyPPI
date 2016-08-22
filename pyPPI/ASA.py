@@ -4,8 +4,8 @@ Accessible surface area calculations
 import logging
 from math import cos, sin, sqrt, pi
 
-from pdbReader import PDBReader
-from resReduce import mapUnbound
+from .pdbReader import PDBReader
+from .resReduce import mapUnbound
 
 R_WATER = 1.4
 # signtificant distance

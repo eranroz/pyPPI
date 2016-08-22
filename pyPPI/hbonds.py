@@ -4,8 +4,8 @@ import math
 import time
 from math import sqrt
 
-from donorAcceptor import DonAcceptor
-from pdbReader import angle
+from .donorAcceptor import DonAcceptor
+from .pdbReader import angle
 
 MIN_LENGTH_HBOND = 1.97  # The typical length of a hydrogen bond in water is 197 pm
 MAX_HBOND = 3.6 ** 2  # distance**2

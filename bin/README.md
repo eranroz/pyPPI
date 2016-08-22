@@ -1,4 +1,4 @@
-setupDB script creates a protein database in SQL:
+setupPpiDb script creates a protein database in SQL:
 A database of interesting properties of the proteins based on scripts of this library.
 
 This should be easy to use script for invoking the most important scripts of the library and store them in DB

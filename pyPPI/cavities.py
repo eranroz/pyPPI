@@ -6,8 +6,8 @@ import numpy as np
 from scipy.linalg import norm
 from scipy.spatial import cKDTree
 
-from ASA import radio_atom, KNOWN_RADIUS, R_WATER
-from DBConfig import get_connection
+from .ASA import radio_atom, KNOWN_RADIUS, R_WATER
+from .DBConfig import get_connection
 
 
 def getPeriperial(pdb, atoms):

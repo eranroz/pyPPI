@@ -9,8 +9,8 @@ import logging
 import math
 import os
 
-from atom import atom, water
-from kdtree import KDTree
+from .atom import atom, water
+from .kdtree import KDTree
 
 NEIGHBOR_DISTANCE = 16
 PDBS_DIR = None

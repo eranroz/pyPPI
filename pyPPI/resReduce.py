@@ -1,7 +1,7 @@
 import logging
 
-from alignment.NWAlignment import NWAlignment
-from atom import ResiduesCodes
+from .alignment.NWAlignment import NWAlignment
+from .atom import ResiduesCodes
 
 PRINT_ALIGNED = False
 
