@@ -1,4 +1,9 @@
 from distutils.core import setup
+from distutils.command.install import INSTALL_SCHEMES
+
+
+for scheme in INSTALL_SCHEMES.values():
+    scheme['data'] = scheme['purelib']
 
 setup(
     name='pyPPI',
@@ -9,5 +14,14 @@ setup(
     license='MIT',
     author='eranroz',
     author_email='eranroz@cs.huji.ac.il',
-    description='Protein-Protein interactions calculations', requires=['requests', 'pymysql']
+    description='Protein-Protein interactions calculations', requires=['requests', 'pymysql'],
+    data_files=[('pyPPI/molprobity', ['pyPPI/molprobity/molprobity.pl',
+                                      'pyPPI/molprobity/remediator.pl',
+                                      'pyPPI/molprobity/reduce']),
+                ('pyPPI/sqls', ['pyPPI/sqls/createDB.sql',
+                                'pyPPI/sqls/createInterface.sql',
+                                'pyPPI/sqls/donors2.sql',
+                                'pyPPI/sqls/proteinComplex.sql']),
+                ('pyPPI', ['pyPPI/DonAcc2.txt']),
+                ]
 )

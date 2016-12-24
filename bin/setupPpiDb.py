@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Setups a protein database in MySQL: a database of interesting properties of the proteins based on scripts of this library.
 
@@ -181,9 +181,10 @@ def createDataBase(pdbsToAnalyzeWithChains):
     :param pdbsToAnalyzeWithChains:
     """
     print('Creating DB: %s' % DBConfig.DB_NAME)
-    installDB = os.path.abspath(os.path.join(os.path.dirname(__file__), 'createDB.sql'))
-    metadataDB = os.path.abspath(os.path.join(os.path.dirname(__file__), 'donors2.sql'))
-    createInterfaceSql = os.path.abspath(os.path.join(os.path.dirname(__file__), 'createInterface.sql'))
+
+    installDB = pkg_resources.resource_filename('pyPPI', '/'.join(['sqls', 'createDB.sql']))
+    metadataDB = pkg_resources.resource_filename('pyPPI', '/'.join(['sqls', 'donors2.sql']))
+    createInterfaceSql = pkg_resources.resource_filename('pyPPI', '/'.join(['sqls', 'createInterface.sql']))
 
     subprocess.call(
         "mysql -u %s -p%s -e 'create database if not exists %s'" % (DBConfig.USER, DBConfig.PASSWD, DBConfig.DB_NAME),
@@ -345,6 +346,17 @@ def calcEnergyTerms(pdbsToAnalyze):
       ignore 1 lines (PDB,electro,pp,mm,pm);
       ''' % (os.path.join(RESULTS_DIR, 'electrostatic.csv')))
     conn.commit()
+
+    print('Calculating electrostatic charges contacts with hydrophobic residues')
+    with open(os.path.join(RESULTS_DIR, 'electrostatic-hydrophobic.csv'), 'w') as electro_hydro_res:
+        print('PDB,positive-hydrophbic,negative-hydrophobic', file=electro_hydro_res)
+        for pdb, chains in pdbsNamesToChains.items():
+            pdb_path = os.path.join(PDBS_DIR, '%s_FH.pdb' % pdb)
+            pdb = PDBReader.readFile(pdb_path, chains)
+            interfaceAtoms = getInterfaceAtoms(cursor, pdb)
+
+            pos, neg = electrostat.calcElectroHydrophobic(pdb, interfaceAtoms)
+            print('%s,%i,%i' % (pdb.name, pos, neg), file=electro_hydro_res)
 
     print('Approximating cavities/gaps volume by monte carlo')
     with open(os.path.join(RESULTS_DIR, 'cavity_vol.csv'), 'w') as cavity_res:

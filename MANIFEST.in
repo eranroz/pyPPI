@@ -1,0 +1,3 @@
+include pyPPI/molprobity/*
+include pyPPI/sqls/*
+include pyPPI/DonAcc2.txt

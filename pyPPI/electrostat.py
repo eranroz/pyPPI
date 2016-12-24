@@ -13,6 +13,8 @@ import math
 from . import DBConfig
 from .kdtree import KDTree
 
+VERBOSE = True
+
 
 def getHbonds(pdb, pdbName):
     conn = DBConfig.get_connection()
@@ -110,3 +112,54 @@ def calcElectrostatic(pdb, interface):
                     pm += 1
 
     return electroStat, pp, mm, pm
+
+
+def is_hydrophobic(atom):
+    """
+    Checks whether an atom belongs to hydrophobic residue
+    :param atom: atom
+    :return: True if the atom belongs to hydrophobic residue, otherwise false
+    """
+    hydrophobic_res = ['VAL', 'ILE', 'LEU', 'PHE', 'TRP', 'CYS', 'ALA', 'PRO']
+    return atom.residue in hydrophobic_res
+
+
+def calcElectroHydrophobic(pdb, interface):
+    """
+    Calculated possible electro interactions, excluding 1-2 and 1-3 interactions
+    (already included in angle and bond interactions
+     """
+    HYDROPHOBIC_CHARED_CUTOFF_DISTANCE = 4  # we could have 6?
+
+    oxtAtoms = [(a.chain, a.resId) for a in pdb.atoms if a.symbol == 'OXT']  # C ter
+    for a in pdb.atoms:
+        if a.symbol == 'O' and (a.chain, a.resId) in oxtAtoms:
+            a.symbol = 'OXT'
+
+    hydrophobic_positive = set()
+    hydrophobic_negative = set()
+    hydroElectroOutput = pdb.getFile('.hydrophobicElectro.txt') if VERBOSE else None
+    for part in pdb.interfaceParts:
+        electro_kdtree = KDTree.construct_from_data([a for a in interface if a.chain in part and assignCharge(a) != 0])
+        other_parts = ''.join([partb for partb in pdb.interfaceParts if partb != part])
+        hydrophobic_partners = [a for a in interface if a.chain in other_parts and is_hydrophobic(a)]
+        for atom in hydrophobic_partners:
+            nearAtoms = list(
+                electro_kdtree.findByDistance(query_point=atom.coord, distance=HYDROPHOBIC_CHARED_CUTOFF_DISTANCE ** 2))
+            for con in nearAtoms:
+                Qi = assignCharge(con)
+                R = math.sqrt(atom.distance(con))
+                if R < HYDROPHOBIC_CHARED_CUTOFF_DISTANCE:
+
+                    if Qi > 0:
+                        hydrophobic_positive.add(
+                            (con.chain, con.resId, con.residue, atom.chain, atom.resId, atom.residue))
+                    elif Qi < 0:
+                        hydrophobic_negative.add((con.chain, con.resId, con.residue, atom.chain, atom.resId,
+                                                  atom.residue))
+                    if hydroElectroOutput:
+                        print(','.join((con.chain, str(con.resId), con.residue, atom.chain, str(atom.resId),
+                                        atom.residue, '%.3f' % R)), file=hydroElectroOutput)
+    if hydroElectroOutput:
+        hydroElectroOutput.close()
+    return len(hydrophobic_positive), len(hydrophobic_negative)
