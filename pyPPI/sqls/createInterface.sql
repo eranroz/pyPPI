@@ -1,7 +1,7 @@
 /* Insert to interface table all atoms that have diffASA>0*/
 insert into NinterfaceAtoms (PDB,Chain,Residue,ResId,Symbol,atom,diffASA)
 select PDB,Chain,Residue,ResId,Symbol,Atom,max(ASA)-min(ASA) from perAtomASA
-group by PDB,Chain,ResId,Symbol
+group by PDB,Chain,Residue,ResId,Symbol,Atom
 having stddev(ASA)>0;
 /* Insert to interface table all atoms that have enough distance */
 insert ignore into NinterfaceAtoms (PDB,Chain,Residue,ResId,Symbol,atom)
