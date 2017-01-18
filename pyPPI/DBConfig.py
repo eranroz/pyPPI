@@ -1,5 +1,6 @@
 """Configuration file for access database
 """
+import sys
 from getpass import getpass
 
 try:
@@ -8,6 +9,9 @@ except:
     import pymysql as MySQLdb
 
 __initlized = False
+
+if sys.version_info[:2] <= (2, 7):
+    input = raw_input
 
 USER = ''
 PASSWD = ''

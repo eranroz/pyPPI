@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Setups a protein database in MySQL: a database of interesting properties of the proteins based on scripts of this library.
 
@@ -11,7 +11,7 @@ The program will create the following directory structure in the same directory:
     ./pdbs/ - list of pdbs downloaded
     ./results/ - results of the analysis scripts
 """
-
+from __future__ import print_function
 import argparse
 import os
 import subprocess
