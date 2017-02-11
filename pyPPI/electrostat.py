@@ -55,7 +55,7 @@ def assignCharge(atom, pH=7):
     # ARG - NH1 NH2 (not NE and N)
     # LYS NZ
     # HIS ND1 NE2
-    if atom.residue == 'LYS' and atom.atomType == 'NZ':
+    if atom.residue == 'LYS' and atom.symbol == 'NZ':
         return 1.0
     posRes = ['ARG']
     if 0.1 < pH <= 6:
