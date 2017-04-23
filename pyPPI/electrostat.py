@@ -141,7 +141,10 @@ def calcElectroHydrophobic(pdb, interface):
     hydrophobic_negative = set()
     hydroElectroOutput = pdb.getFile('.hydrophobicElectro.txt') if VERBOSE else None
     for part in pdb.interfaceParts:
-        electro_kdtree = KDTree.construct_from_data([a for a in interface if a.chain in part and assignCharge(a) != 0])
+        charged_atoms = [a for a in interface if a.chain in part and assignCharge(a) != 0]
+        if not any(charged_atoms):
+            continue
+        electro_kdtree = KDTree.construct_from_data(charged_atoms)
         other_parts = ''.join([partb for partb in pdb.interfaceParts if partb != part])
         hydrophobic_partners = [a for a in interface if a.chain in other_parts and is_hydrophobic(a)]
         for atom in hydrophobic_partners:
