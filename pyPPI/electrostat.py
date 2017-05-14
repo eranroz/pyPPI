@@ -16,7 +16,6 @@ from .kdtree import KDTree
 
 VERBOSE = True
 
-
 def getHbonds(pdb, pdbName):
     conn = DBConfig.get_connection()
     cursor = conn.cursor()
@@ -66,13 +65,16 @@ def assignCharge(atom, pH=7):
     return 0
 
 
-def calcElectrostatic(pdb, interface):
+def calcElectrostatic(pdb, interface, exclude_hbonds=False, count_cutoff_distance=5):
     """
     Calculated possible electro interactions, excluding 1-2 and 1-3 interactions
     (already included in angle and bond interactions
      """
     CUTOFF_DISTANCE = 7  # we could have 6?
-    hHbonds = getHbonds(pdb, pdb.name)
+    if exclude_hbonds:
+        hHbonds = getHbonds(pdb, pdb.name)
+    else:
+        hHbonds = []
 
     components = []
     oxtAtoms = [(a.chain, a.resId) for a in pdb.atoms if a.symbol == 'OXT']  # C ter
@@ -104,7 +106,7 @@ def calcElectrostatic(pdb, interface):
             R = math.sqrt(atom.distance(con))
             electroStat += eInteraction(Qi, Qj, R)
 
-            if R < 4:
+            if R < count_cutoff_distance:
                 if Qi > 0 and Qj > 0:
                     pp += 1
                 elif Qi < 0 and Qj < 0:
